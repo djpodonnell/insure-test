@@ -10,21 +10,22 @@ hello.init({
 class App extends Component {
   state = {
     isLogin:false,
-    update:true
+    update:true,
+    currentData:[]
  }
 
  loginGoogle = () => {
   hello('google').login({
     scope: 'email',
     force: true
-});
+  });
 }
 
 loginWindows = () => {
   hello('windows').login({
     scope: 'email',
     force: true
-});
+  });
 }
 
   logoutApp = () => {
@@ -41,18 +42,81 @@ loginWindows = () => {
     clearInterval(this.interval);
   }
 
+  insertRow(user,provider) {
+    var url = 'http://localhost:3001/insert/';
+    url += '?param1='+user+'&param2='+provider;
+    fetch(url)
+    .then((response) => response.json())
+    .then((returnedData) => {
+    }).catch((err) => {
+      console.log(err.message);
+  });
+  }
+
+  updateCount(user,provider,count) {
+    var url = 'http://localhost:3001/update/';
+    url += '?param1='+user+'&param2='+provider+'&param3='+count;
+    fetch(url)
+    .then((response) => response.json())
+    .then((returnedData) => {
+    }).catch((err) => {
+      console.log(err.message);
+  });
+  }
+
+  getCount(user,provider) {
+    var count = 0;
+    var url = 'http://localhost:3001/hello/';
+        url += '?param1='+user+'&param2='+provider;
+        fetch(url)
+        .then((response) => response.json())
+        .then((returnedData) => {
+          if(returnedData.data[0] !== undefined) {
+            count = returnedData.data[0].count;
+          }
+        })
+        .catch((err) => {
+            console.log(err.message);
+        });
+
+        return count;
+  }
+
   render() {
     const goog = hello('google').getAuthResponse();
     const win = hello('windows').getAuthResponse();
+
     var userName = "";
+    var self = this;
     var online = function(session) {
       var currentTime = (new Date()).getTime() / 1000;
       if(session != null) {
         hello.on('auth.login', function(auth) {
           // Call user information, for the given network
           hello(auth.network).api('/me').then(function(r) {
-            userName = "Hello "+r.email;
-            document.getElementById("helloname").innerHTML = userName;
+            var url = 'http://localhost:3001/hello/';
+            url += '?param1='+r.email+'&param2='+auth.network;
+            fetch(url)
+            .then((response) => response.json())
+            .then((returnedData) => {
+              if(returnedData.data[0] !== undefined){ console.log("first count = "+returnedData.data[0].count)} 
+              else {console.log("None")}
+              if(!returnedData.data[0]) {
+                console.log("inserting");
+                self.insertRow(r.email,auth.network);
+              } else {
+                var c = returnedData.data[0].count;
+                console.log("adding "+c);
+                self.updateCount(r.email,auth.network,c++);
+              }
+                var count = self.getCount(r.email,auth.network);
+                userName = "You have logged into user "+r.email+", provider "
+                +auth.network+" "+count+" times.";
+                document.getElementById("helloname").innerHTML = userName;
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
           });
       });
       }
@@ -64,8 +128,8 @@ loginWindows = () => {
     
     return (
       <div className="App">
-        {online(goog) || online(win) ? (<div><p id="helloname">
-          </p>
+        {online(goog) || online(win) ? (<div>
+          <p id="helloname"></p>
           <button onClick={()=>this.logoutApp()}>Logout</button>
           </div>) : 
         (<div>
