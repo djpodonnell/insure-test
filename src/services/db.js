@@ -8,6 +8,12 @@ async function query(sql, params) {
   return rows;
 }
 
+async function run(sql,params) {
+    const [rows, fields] = await pool.execute(sql,params);
+    return rows;
+  }
+
 module.exports = {
-  query
+  query,
+  run
 }
