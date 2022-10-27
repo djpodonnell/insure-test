@@ -45,11 +45,12 @@ loginWindows = () => {
   insertRow(user,provider) {
     var url = 'http://localhost:3001/insert/';
     url += '?param1='+user+'&param2='+provider;
-    console.log("URL = "+url);
     fetch(url)
-    .then((response) => response.json())
-    .then((returnedData) => {
-    }).catch((err) => {
+    .then((response) => {
+      console.log("insert mess2 = "+JSON.stringify(response));
+      response.json();
+    })
+    .then((returnedData) => {}).catch((err) => {
       console.log(err.message);
   });
   }
@@ -102,6 +103,7 @@ loginWindows = () => {
             .then((returnedData) => {
               if(returnedData.data[0] !== undefined){ console.log("first count = "+returnedData.data[0].count)} 
               else {console.log("None")}
+
               if(!returnedData.data[0]) {
                 console.log("inserting");
                 self.insertRow(r.email,auth.network);

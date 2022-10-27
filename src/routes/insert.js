@@ -21,8 +21,8 @@ router.get('/', function(req, res, next) {
           "Access-Control-Allow-Headers",
           "Origin, X-Requested-With, Content-Type, Accept"
         );
-        //res.json(insert.insertRow(user,provider));
-        res.json("message : ok");
+        res.json(insert.insertRow(user,provider));
+        //res.json("message : ok");
     }
     
   } catch(err) {
