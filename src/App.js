@@ -10,8 +10,9 @@ hello.init({
 class App extends Component {
   state = {
     isLogin:false,
-    update:true,
-    currentData:[]
+    update:false,
+    currentData:[],
+    rendered:false
  }
 
  loginGoogle = () => {
@@ -36,7 +37,8 @@ loginWindows = () => {
 
   componentDidMount() {
     var updated = this.state.update;
-    this.interval = setInterval(() => this.setState({ update: !updated }), 3000);
+    this.setState({rendered:true});
+    this.interval = setInterval(() => this.setState({ update: !updated }), 1000);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -84,14 +86,14 @@ loginWindows = () => {
         return count;
   }
 
-  render() {
-    const goog = hello('google').getAuthResponse();
-    const win = hello('windows').getAuthResponse();
-
-    var userName = "";
-    var self = this;
-    var online = function(session) {
+    isOnline(session) {
+      var userName = "";
+      var self = this;
       var currentTime = (new Date()).getTime() / 1000;
+
+      if(!this.state.rendered) {
+        return;
+      }
       if(session != null) {
         hello.on('auth.login', function(auth) {
           // Call user information, for the given network
@@ -115,7 +117,9 @@ loginWindows = () => {
                 var count = self.getCount(r.email,auth.network);
                 userName = "You have logged into user "+r.email+", provider "
                 +auth.network+" "+count+" times.";
-                document.getElementById("helloname").innerHTML = userName;
+                if(document.getElementById("helloname") !== null) {
+                    document.getElementById("helloname").innerHTML = userName;
+                }
             })
             .catch((err) => {
                 console.log(err.message);
@@ -127,11 +131,16 @@ loginWindows = () => {
       return session && session.access_token && session.expires > currentTime;
     };
 
+  render() {
+    const goog = hello('google').getAuthResponse();
+    const win = hello('windows').getAuthResponse();
+    const onlineGoogle = this.isOnline(goog);
+    const onlineWin = this.isOnline(win);
     //console.log('win = '+online(win));
     
     return (
       <div className="App">
-        {online(goog) || online(win) ? (<div>
+        {onlineGoogle || onlineWin ? (<div>
           <p id="helloname"></p>
           <button onClick={()=>this.logoutApp()}>Logout</button>
           </div>) : 
