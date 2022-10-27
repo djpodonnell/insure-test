@@ -45,6 +45,7 @@ loginWindows = () => {
   insertRow(user,provider) {
     var url = 'http://localhost:3001/insert/';
     url += '?param1='+user+'&param2='+provider;
+    console.log("URL = "+url);
     fetch(url)
     .then((response) => response.json())
     .then((returnedData) => {

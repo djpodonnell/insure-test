@@ -1,16 +1,16 @@
-const mysql = require('mysql2/promise');
+const app = require('sqlite3');
+const db = new app.Database('sqlite/hello.db');
 const config = require('../config');
-const pool = mysql.createPool(config.db);
 
 async function query(sql, params) {
-  const [rows, fields] = await pool.execute(sql, params);
+  //var stmt = db.prepare(sql);
+  const row = await db.get(sql, params);
 
-  return rows;
+  return row;
 }
 
 async function run(sql,params) {
-    const [rows, fields] = await pool.execute(sql,params);
-    return rows;
+    await db.run(sql,params);
   }
 
 module.exports = {

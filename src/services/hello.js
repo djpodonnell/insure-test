@@ -17,7 +17,7 @@ function getMultiple(page = 1,user,provider) {
 
 function insertRow(user,provider) {
   const sql = `INSERT INTO userCount (username,provider,count) VALUES (?,?,0)`;
-  db.run(sql,[user,provider]);
+  return db.run(sql,[user,provider]);
 }
 
 function updateCount(user,provider,count) {
