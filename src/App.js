@@ -12,7 +12,8 @@ class App extends Component {
     isLogin:false,
     update:false,
     currentData:[],
-    rendered:false
+    rendered:false,
+    insertMode: false
  }
 
  loginGoogle = () => {
@@ -44,50 +45,71 @@ loginWindows = () => {
     clearInterval(this.interval);
   }
 
+  getCount(user,provider) {
+    // Get the current 'global' time from an API using Promise
+    return new Promise((resolve, reject) => {
+      var url = 'http://localhost:3001/hello/';
+        url += '?param1='+user+'&param2='+provider;
+        fetch(url)
+        .then((response) => response.json())
+        .then((returnedData) => {
+          console.log("ret dat = "+returnedData+" at "+Date.now());
+          //if(returnedData!== undefined) {
+            resolve(returnedData);
+          //}
+        })
+        .catch((err) => {
+            console.log(err.message);
+            reject(0);
+        });
+    })
+  }
+
+  handleCount(email,provider) {
+    console.log("get 2nd count");
+    this.getCount(email,provider).then(count => {
+      console.log("2nd count = "+Object.values(count)+" at "+Date.now());
+      var userName = "You have logged into user "+email+", provider "
+      +provider+" "+count+" times.";
+      if(document.getElementById("helloname") !== null) {
+          document.getElementById("helloname").innerHTML = userName;
+      }
+    });
+    
+  }
+
   insertRow(user,provider) {
     var url = 'http://localhost:3001/insert/';
     url += '?param1='+user+'&param2='+provider;
-    fetch(url)
+    return fetch(url)
     .then((response) => {
-      console.log("insert mess2 = "+JSON.stringify(response));
-      response.json();
+      console.log("insert finished");
+      return response.json();
     })
     .then((returnedData) => {}).catch((err) => {
       console.log(err.message);
+      return err.message;
   });
   }
 
   updateCount(user,provider,count) {
     var url = 'http://localhost:3001/update/';
     url += '?param1='+user+'&param2='+provider+'&param3='+count;
-    fetch(url)
-    .then((response) => response.json())
+    return fetch(url)
+    .then((response) => {
+      console.log("update finished");
+      return response.json();
+    })
     .then((returnedData) => {
+      this.setState({insertMode: false});
     }).catch((err) => {
       console.log(err.message);
+      this.setState({insertMode: true});
+      return err.message;
   });
   }
 
-  getCount(user,provider) {
-    var count = 0;
-    var url = 'http://localhost:3001/hello/';
-        url += '?param1='+user+'&param2='+provider;
-        fetch(url)
-        .then((response) => response.json())
-        .then((returnedData) => {
-          if(returnedData.data[0] !== undefined) {
-            count = returnedData.data[0].count;
-          }
-        })
-        .catch((err) => {
-            console.log(err.message);
-        });
-
-        return count;
-  }
-
     isOnline(session) {
-      var userName = "";
       var self = this;
       var currentTime = (new Date()).getTime() / 1000;
 
@@ -98,31 +120,31 @@ loginWindows = () => {
         hello.on('auth.login', function(auth) {
           // Call user information, for the given network
           hello(auth.network).api('/me').then(function(r) {
-            var url = 'http://localhost:3001/hello/';
-            url += '?param1='+r.email+'&param2='+auth.network;
-            fetch(url)
-            .then((response) => response.json())
-            .then((returnedData) => {
-              if(returnedData.data[0] !== undefined){ console.log("first count = "+returnedData.data[0].count)} 
-              else {console.log("None")}
 
-              if(!returnedData.data[0]) {
-                console.log("inserting");
-                self.insertRow(r.email,auth.network);
-              } else {
-                var c = returnedData.data[0].count;
-                console.log("adding "+c);
-                self.updateCount(r.email,auth.network,c++);
+            self.getCount(r.email,auth.network).then(count => {
+              if(self.state.insertMode) {
+                return;
               }
-                var count = self.getCount(r.email,auth.network);
-                userName = "You have logged into user "+r.email+", provider "
-                +auth.network+" "+count+" times.";
-                if(document.getElementById("helloname") !== null) {
-                    document.getElementById("helloname").innerHTML = userName;
-                }
-            })
-            .catch((err) => {
-                console.log(err.message);
+
+              console.log("first count = "+count+" at "+Date.now());
+            
+              //if(count === undefined || count === 0) {
+                console.log("inserting = "+self);
+                self.setState({insertMode: true});
+                var user = r.email;
+                var provider = auth.network;
+                self.insertRow(r.email,auth.network).then(function(){
+                  var self2 = self;
+                  self2.handleCount(user,provider);
+                });
+              /* else {
+                var c = count;
+                console.log("adding "+c);
+                /*self.updateCount(r.email,auth.network,c++).then(function(r,auth) {
+                  var self2 = self;
+                  self2.handleCount(r.email,auth.network)
+                });
+              }*/
             });
           });
       });

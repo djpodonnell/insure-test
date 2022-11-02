@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept"
     );
-    res.json(quotes.getMultiple(req.query.page,user,provider));
+    res.json(quotes.getMultiple(user,provider));
   } catch(err) {
     console.error(`Error while getting quotes `, err.message);
     next(err);
