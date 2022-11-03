@@ -14,15 +14,12 @@ router.get('/', function(req, res, next) {
     if(index1 > -1 && index2 > -1) {
         user= url.substring(index1+7, index2);
         provider= url.substring(index2+8);
-        console.log("user ins= "+user);
-        console.log("prov ins= "+provider);
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.header(
           "Access-Control-Allow-Headers",
           "Origin, X-Requested-With, Content-Type, Accept"
         );
         res.json(insert.insertRow(user,provider));
-        //res.json("message : ok");
     }
     
   } catch(err) {

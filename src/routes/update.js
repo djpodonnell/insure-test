@@ -18,10 +18,6 @@ router.get('/', function(req, res, next) {
         provider= url.substring(index2+8,index3);
         count= url.substring(index3+8);
     }
-    console.log("url= "+url);
-    console.log("user up = "+user);
-    console.log("prov up = "+provider);
-    console.log("count up= "+count);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.header(
       "Access-Control-Allow-Headers",

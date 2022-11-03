@@ -4,7 +4,9 @@ let hello = require('hellojs/dist/hello.all.js')
 
 hello.init({
   google: '343118601751-98jpuellh8ckif2hpi0ak309jb6nufc5.apps.googleusercontent.com',
-  windows: '136e980d-d4ae-4257-8f2d-7f71f34625f5'
+  //'393849222573-3770pnkhh6ta113vrf10j7hr169j42la.apps.googleusercontent.com',
+  windows: '64d87118-92ad-4898-85eb-a05dc8af6e49',
+  facebook: ''
 }, {redirect_uri: 'http://localhost:3000'});
 
 class App extends Component {
@@ -13,24 +15,37 @@ class App extends Component {
     update:false,
     currentData:[],
     rendered:false,
-    insertMode: false
+    insertMode: false,
+    currentUser: "",
+    currentProvider: "",
+    currentCount: 0
  }
 
  loginGoogle = () => {
-  hello('google').login({
-    scope: 'email',
-    force: true
-  });
-}
+    hello('google').login({
+      scope: 'email',
+      force: true
+    });
+  }
 
 loginWindows = () => {
   hello('windows').login({
     scope: 'email',
     force: true
   });
-}
+ }
+
+  loginFacebook = () => {
+    hello('facebook').login({
+      scope: 'email',
+      force: true
+  });
+  }
 
   logoutApp = () => {
+    var c = this.state.currentCount+1;
+    this.updateCount(this.state.currentUser,this.state.currentProvider,c);
+    
     hello('google').logout();
     hello('windows').logout();
     this.setState({isLogin:false});
@@ -52,13 +67,11 @@ loginWindows = () => {
         url += '?param1='+user+'&param2='+provider;
         fetch(url)
         .then((response) => {
-          console.log("resp2 = "+Object.keys(response));
+          response.json().then((resp) => {
+            resolve(resp.countValue);
+          });
         })
         .then((returnedData) => {
-          console.log("ret dat = "+returnedData+" at "+Date.now());
-          //if(returnedData!== undefined) {
-            resolve(returnedData);
-          //}
         })
         .catch((err) => {
             console.log(err.message);
@@ -68,11 +81,10 @@ loginWindows = () => {
   }
 
   handleCount(email,provider) {
-    console.log("get 2nd count");
     this.getCount(email,provider).then(count => {
-      console.log("2nd count = "+count+" at "+Date.now());
       var userName = "You have logged into user "+email+", provider "
       +provider+" "+count+" times.";
+      this.setState({currentCount: count});
       if(document.getElementById("helloname") !== null) {
           document.getElementById("helloname").innerHTML = userName;
       }
@@ -85,11 +97,9 @@ loginWindows = () => {
     url += '?param1='+user+'&param2='+provider;
     return fetch(url)
     .then((response) => {
-      console.log("insert finished");
       return response.json();
     })
     .then((returnedData) => {}).catch((err) => {
-      console.log(err.message);
       return err.message;
   });
   }
@@ -99,13 +109,11 @@ loginWindows = () => {
     url += '?param1='+user+'&param2='+provider+'&param3='+count;
     return fetch(url)
     .then((response) => {
-      console.log("update finished");
       return response.json();
     })
     .then((returnedData) => {
       this.setState({insertMode: false});
     }).catch((err) => {
-      console.log(err.message);
       this.setState({insertMode: true});
       return err.message;
   });
@@ -116,37 +124,37 @@ loginWindows = () => {
       var currentTime = (new Date()).getTime() / 1000;
 
       if(!this.state.rendered) {
-        return;
+        //return;
       }
       if(session != null) {
         hello.on('auth.login', function(auth) {
           // Call user information, for the given network
           hello(auth.network).api('/me').then(function(r) {
+            const user = r.email;
+            const provider = auth.network;
+            if(r.email === "") {
+              return;            
+            }
+            self.setState({currentUser: user,currentProvider: provider});
 
             self.getCount(r.email,auth.network).then(count => {
               if(self.state.insertMode) {
                 return;
               }
+              self.setState({currentCount: count});
+              
 
-              console.log("first count = "+count+" at "+Date.now());
-            
-              //if(count === undefined || count === 0) {
-                console.log("inserting = "+self);
+              if(count === undefined || count === 0) {
                 self.setState({insertMode: true});
-                var user = r.email;
-                var provider = auth.network;
-                self.insertRow(r.email,auth.network).then(function(){
+                
+                self.insertRow(user,provider).then(function(){
                   var self2 = self;
                   self2.handleCount(user,provider);
                 });
-              /* else {
-                var c = count;
-                console.log("adding "+c);
-                /*self.updateCount(r.email,auth.network,c++).then(function(r,auth) {
-                  var self2 = self;
-                  self2.handleCount(r.email,auth.network)
-                });
-              }*/
+              }
+               else {
+                self.handleCount(user,provider);
+              }
             });
           });
       });
@@ -160,7 +168,6 @@ loginWindows = () => {
     const win = hello('windows').getAuthResponse();
     const onlineGoogle = this.isOnline(goog);
     const onlineWin = this.isOnline(win);
-    //console.log('win = '+online(win));
     
     return (
       <div className="App">
@@ -170,7 +177,7 @@ loginWindows = () => {
           </div>) : 
         (<div>
           <button onClick={()=>this.loginGoogle()}>Google Login</button>
-        <button onClick={()=>this.loginWindows()}>Windows Login</button>
+        <button onClick={()=>this.loginWindows()}>WindowsLogin</button>
         </div>)}
       </div>
     )

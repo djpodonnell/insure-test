@@ -15,15 +15,15 @@ router.get('/', function(req, res, next) {
         user= url.substring(index1+7, index2);
         provider= url.substring(index2+8);
     }
-    console.log("user check= "+user);
-    console.log("prov check= "+provider);
-    
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.header(
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept"
     );
-    res.json(quotes.getMultiple(user,provider));
+    quotes.getMultiple(user,provider).then(count => {
+      res.json({ countValue: count});
+      return count;
+    });
   } catch(err) {
     console.error(`Error while getting quotes `, err.message);
     next(err);

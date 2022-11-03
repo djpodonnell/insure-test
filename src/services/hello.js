@@ -2,10 +2,12 @@ const db = require('./db');
 const config = require('../config');
 
 function getMultiple(user,provider) {
-  const data = db.query(`SELECT count FROM userCount WHERE username =? AND provider =?`, 
-  [user, provider]);
-
-  return data;
+  return new Promise((resolve, reject) => {
+    db.query(`SELECT count FROM userCount WHERE username =? AND provider =?`, [user, provider])
+    .then(count => {
+        resolve(count);
+    });
+  });
 }
 
 function insertRow(user,provider) {

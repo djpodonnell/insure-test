@@ -2,21 +2,23 @@ const app = require('sqlite3');
 const db = new app.Database('sqlite/hello.db');
 const config = require('../config');
 
-async function query(sql, params) {
-  var count = 0;
-  console.log("sql = "+sql+",par = "+params+" at "+Date.now());
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      console.log("err = "+err.message);
+function query(sql, params) {
+  return new Promise((resolve, reject) => {
+    var count = 0;
+    try {
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          console.log("err = "+err.message);
+        }
+        rows.forEach((row) => {
+          count = row.count;
+        });
+        resolve (count);
+      });
+    } catch (err) {
+      reject(0);
     }
-    rows.forEach((row) => {
-      console.log("key = "+Object.keys(row));
-      console.log("val = "+Object.values(row));
-      count = row.count;
-    });
-    console.log("ret = "+count+" at "+Date.now());
-    return count;
-  });
+  })
 }
 
 async function run(sql,params) {
