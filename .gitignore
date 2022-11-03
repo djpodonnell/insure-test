@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 
-sqlite/
+sqlite/hello.db
 
 # testing
 /coverage

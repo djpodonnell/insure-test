@@ -51,7 +51,9 @@ loginWindows = () => {
       var url = 'http://localhost:3001/hello/';
         url += '?param1='+user+'&param2='+provider;
         fetch(url)
-        .then((response) => response.json())
+        .then((response) => {
+          console.log("resp2 = "+Object.keys(response));
+        })
         .then((returnedData) => {
           console.log("ret dat = "+returnedData+" at "+Date.now());
           //if(returnedData!== undefined) {
@@ -68,7 +70,7 @@ loginWindows = () => {
   handleCount(email,provider) {
     console.log("get 2nd count");
     this.getCount(email,provider).then(count => {
-      console.log("2nd count = "+Object.values(count)+" at "+Date.now());
+      console.log("2nd count = "+count+" at "+Date.now());
       var userName = "You have logged into user "+email+", provider "
       +provider+" "+count+" times.";
       if(document.getElementById("helloname") !== null) {
