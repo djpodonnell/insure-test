@@ -176,7 +176,7 @@ loginWindows = () => {
           <button onClick={()=>this.logoutApp()}>Logout</button>
           </div>) : 
         (<div>
-          <button onClick={()=>this.loginGoogle()}>Google Login</button>
+          <button id="googleButton" onClick={()=>this.loginGoogle()}>Google Login</button>
         <button onClick={()=>this.loginWindows()}>WindowsLogin</button>
         </div>)}
       </div>
