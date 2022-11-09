@@ -6,6 +6,7 @@
 .pnp.js
 
 sqlite/hello.db
+/__snapshots__
 
 # testing
 /coverage
