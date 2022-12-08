@@ -24,7 +24,8 @@ class App extends Component {
  loginGoogle = () => {
     hello('google').login({
       scope: 'email',
-      force: true
+      force: true,
+      display:'page'
     });
   }
 
@@ -138,6 +139,7 @@ loginWindows = () => {
             self.setState({currentUser: user,currentProvider: provider});
 
             self.getCount(r.email,auth.network).then(count => {
+              //console.log("user = "+r.email);
               if(self.state.insertMode) {
                 return;
               }
@@ -165,6 +167,7 @@ loginWindows = () => {
 
   render() {
     const goog = hello('google').getAuthResponse();
+    //console.log("goog = "+goog);
     const win = hello('windows').getAuthResponse();
     const onlineGoogle = this.isOnline(goog);
     const onlineWin = this.isOnline(win);

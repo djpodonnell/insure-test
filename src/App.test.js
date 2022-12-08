@@ -3,10 +3,7 @@
  */
 
 import TestRenderer from 'react-test-renderer';
-
 import App from './App';
-
-//Enzyme.configure({adapter: new Adapter()});
 
 it('test app behaviour', () => {
     const testRenderer = TestRenderer.create(
