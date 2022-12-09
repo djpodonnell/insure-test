@@ -7,6 +7,7 @@
 
 sqlite/hello.db
 /__snapshots__
+src/__snapshots__
 
 # testing
 /coverage

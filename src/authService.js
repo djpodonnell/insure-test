@@ -8,5 +8,5 @@ export function helloGoogle(){
     hello('google').login({
         scope: 'email',
         force: true
-      });
+      });  
   }
