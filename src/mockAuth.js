@@ -1,26 +1,15 @@
-﻿/**
- * @jest-environment node
- */
-
- import { render, screen, fireEvent, waitFor } from '@testing-library/react';
  import { TextEncoder, TextDecoder } from 'util';
- import jwksClient from "jwks-rsa";
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+ var jwksRsa = require('jwks-rsa');
  import createJWKSMock, { JWKSMock } from 'mock-jwks';
  import jwt, { TokenExpiredError } from "jsonwebtoken";
  
- const client = jwksClient({
+ const client = new jwksRsa.JwksClient({
    jwksUri: "https://MYAUTH0APP.auth0.com/.well-known/jwks.json",
  });
  const jwks = createJWKSMock("https://MYAUTH0APP.auth0.com/");
- 
-   beforeEach(() => {
-     jwks.start();
-   });
- 
-   afterEach(() => {
-     jwks.stop();
-   });
- 
+
    const verifyAuth0Token = async token => {
      return new Promise((resolve, reject) => {
        jwt.verify(token, getKey, { algorithms: ["RS256"] }, (err, decoded) => {
@@ -48,10 +37,4 @@
      });
    };
  
- it('test app behaviour', async () => {
-   const token = jwks.token({});
-   const data = await verifyAuth0Token(token);
-   expect(data).not.toEqual({});
-   expect(data.email).toEqual("djpodonnell@gmail.com"); 
-   expect(data.provider).toEqual("google"); 
- })
+export default verifyAuth0Token;

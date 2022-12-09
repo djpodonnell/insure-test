@@ -22,11 +22,8 @@ class App extends Component {
  }
 
  loginGoogle = () => {
-    hello('google').login({
-      scope: 'email',
-      force: true,
-      display:'page'
-    });
+  const authService = require('./authService');
+  authService.helloGoogle();
   }
 
 loginWindows = () => {
