@@ -14,6 +14,7 @@ hello.init({
 }, {redirect_uri: 'http://localhost:3000'});
 
 const jwks = createJWKSMock("https://MYAUTH0APP.auth0.com/");
+const authService = require('./authService');
 
   beforeEach(() => {
     jwks.start();
@@ -35,9 +36,10 @@ it('test app behaviour', async () => {
   expect(tree).toMatchSnapshot();
 });
 
-it('test already logged in', async () => { 
-  const authService = require('./authService');
-  const spyOnHello = jest.spyOn(authService , 'helloGoogle').mockReturnValue("hjk");
+it('test login attempt', async () => { 
+  const spyOnHello = jest.spyOn(authService , 'helloGoogle');
+  const jsdomAlert = window.open;  
+  window.open = () => {}; 
 
  const token = await jwks.token({});
  const data = await verifyAuth0Token(token);
@@ -57,5 +59,40 @@ it('test already logged in', async () => {
 });
 
 it('google login', async () => { 
+  const email = {
+    email: 'djpodonnell@gmail.com'
+  };
+  var currentTime = (new Date()).getTime() / 1000;
+  
+  const spyOnAuth = jest.spyOn(authService , 'getAuthResponse').mockReturnValue(obj);
+  const testRenderer = TestRenderer.create(
+    <App />
+  );
+  const testInstance = testRenderer.root;
+  expect(spyOnAuth).toHaveBeenCalled();
+  const buttons = testInstance.findAllByProps({ id: 'googleButton' });
+  expect(buttons.length).toBe(0); 
+  const labels = testInstance.findAllByProps({ id: 'helloname' });
+  expect(labels.length).toBe(1); 
+  const out= testInstance.findAllByProps({ id: 'logoutButton' });
+  expect(out.length).toBe(1); 
+});
 
-}
+it('google login fail', async () => { 
+  const obj = {
+    network: 'google'
+  };
+  
+  const spyOnAuth = jest.spyOn(authService , 'getAuthResponse').mockReturnValue(obj);
+  const testRenderer = TestRenderer.create(
+    <App />
+  );
+  const testInstance = testRenderer.root;
+  expect(spyOnAuth).toHaveBeenCalled();
+  const buttons = testInstance.findAllByProps({ id: 'googleButton' });
+  expect(buttons.length).toBe(1); 
+  const labels = testInstance.findAllByProps({ id: 'helloname' });
+  expect(labels.length).toBe(0); 
+  const out= testInstance.findAllByProps({ id: 'logoutButton' });
+  expect(out.length).toBe(0); 
+});
