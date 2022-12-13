@@ -1,5 +1,4 @@
 const db = require('./db');
-const config = require('../config');
 
 function getMultiple(user,provider) {
   return new Promise((resolve, reject) => {
