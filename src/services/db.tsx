@@ -1,13 +1,12 @@
 const app = require('sqlite3');
-const db = new app.Database('sqlite/hello.db');
+const dbReq = new app.Database('sqlite/hello.db');
 
 function query(sql:string, params:object[]) {
   return new Promise((resolve, reject) => {
     var count = 0;
     try {
-      db.all(sql, params, (err:any, rows:object[]) => {
+      dbReq.all(sql, params, (err:object, rows:object[]) => {
         if (err) {
-          console.log("err = "+err.message);
         }
         rows.forEach((row:any) => {
           count = row.count;
@@ -15,14 +14,14 @@ function query(sql:string, params:object[]) {
         resolve (count);
       });
     } catch (err) {
-      reject(0);
+      reject(err);
     }
   })
 }
 
 async function run(sql:string,params:object[]) {
     try {
-      await db.run(sql,params);
+      await dbReq.run(sql,params);
 
       return "message : ok";
     } catch (err) {

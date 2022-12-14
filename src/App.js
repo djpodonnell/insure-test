@@ -39,6 +39,7 @@ class App extends Component {
   }
 
   handleCount(email,provider) {
+
     authService.getCount(email,provider).then(count => {
       var userName = "You have logged into user "+email+", provider "
       +provider+" "+count+" times.";
@@ -46,6 +47,7 @@ class App extends Component {
       if(document.getElementById("helloname") !== null) {
           document.getElementById("helloname").innerHTML = userName;
       }
+    }).then(error => {
     });
   }
 
@@ -79,6 +81,11 @@ class App extends Component {
                else {
                 self.handleCount(user,provider);
               }
+            }).catch((err) => {
+              if(document.getElementById("helloname") !== null) {
+                document.getElementById("helloname").innerHTML = 
+                err+" Check the status of the server and database.";
+            }
             });
           });
       });

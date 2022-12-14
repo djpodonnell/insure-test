@@ -3,7 +3,7 @@ const router = express.Router();
 const quotes = require('../services/hello');
 
 /* GET quotes listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req:any, res:any, next:any) {
   try {
     var user = "";
     var provider = "";
@@ -20,11 +20,11 @@ router.get('/', function(req, res, next) {
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept"
     );
-    quotes.getMultiple(user,provider).then(count => {
+    quotes.getMultiple(user,provider).then((count:any) => {
       res.json({ countValue: count});
       return count;
     });
-  } catch(err) {
+  } catch(err:any) {
     console.log(err.message);
     next(err);
   }

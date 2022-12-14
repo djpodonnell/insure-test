@@ -29,7 +29,6 @@ export function helloGoogle(){
   }
 
   export function getCount(user,provider) {
-    // Get the current 'global' time from an API using Promise
     return new Promise((resolve, reject) => {
       var url = 'http://localhost:3001/hello/';
         url += '?param1='+user+'&param2='+provider;
@@ -42,8 +41,7 @@ export function helloGoogle(){
         .then((returnedData) => {
         })
         .catch((err) => {
-            console.log(err.message);
-            reject(0);
+            reject(err.message);
         });
     })
   }
