@@ -28,7 +28,7 @@ export function helloGoogle(){
   });
   }
 
-  export function getCount(user,provider) {
+  export function getCount(user:string,provider:string) {
     return new Promise((resolve, reject) => {
       var url = 'http://localhost:3001/hello/';
         url += '?param1='+user+'&param2='+provider;
@@ -46,7 +46,7 @@ export function helloGoogle(){
     })
   }
 
-  export function insertRow(user,provider) {
+  export function insertRow(user:string,provider:string) {
     var url = 'http://localhost:3001/insert/';
     url += '?param1='+user+'&param2='+provider;
     return fetch(url)
@@ -58,11 +58,11 @@ export function helloGoogle(){
   });
   }
 
-  export function getAuthResponse(provider) {
+  export function getAuthResponse(provider:string) {
     return hello(provider).getAuthResponse();
   }
 
-  export function getNetworkResponse(provider){
+  export function getNetworkResponse(provider:string){
     return hello(provider).api('/me');
   }
 
@@ -70,7 +70,7 @@ export function helloGoogle(){
     return hello.on('auth.login');
   }
 
-  export function updateCount(user,provider,count) {
+  export function updateCount(user:string,provider:string,count:number) {
     var url = 'http://localhost:3001/update/';
     url += '?param1='+user+'&param2='+provider+'&param3='+count;
     return fetch(url)

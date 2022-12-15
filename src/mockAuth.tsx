@@ -1,6 +1,6 @@
  import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+(global as any).TextDecoder = TextDecoder;
  var jwksRsa = require('jwks-rsa');
  import createJWKSMock, { JWKSMock } from 'mock-jwks';
  import jwt, { TokenExpiredError } from "jsonwebtoken";
@@ -10,9 +10,9 @@ global.TextDecoder = TextDecoder;
  });
  const jwks = createJWKSMock("https://MYAUTH0APP.auth0.com/");
 
-   const verifyAuth0Token = async token => {
+   const verifyAuth0Token = async (token:any) => {
      return new Promise((resolve, reject) => {
-       jwt.verify(token, getKey, { algorithms: ["RS256"] }, (err, decoded) => {
+       jwt.verify(token, getKey, { algorithms: ["RS256"] }, (err:any , decoded:any) => {
          if (err) {
            reject(err);
            return;
@@ -25,8 +25,8 @@ global.TextDecoder = TextDecoder;
      });
    };
  
-   const getKey = (header, callback) => {
-     client.getSigningKey(header.kid, function(err, key) {
+   const getKey = (header:any, callback:any) => {
+     client.getSigningKey(header.kid, function(err:any, key:any) {
        if (err) {
          callback(err);
          return;

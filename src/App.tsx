@@ -1,4 +1,5 @@
 import React,{ Component } from 'react';
+import { interval } from 'rxjs';
 
 let hello = require('hellojs/dist/hello.all.js');
 const authService = require('./authService');
@@ -32,26 +33,26 @@ class App extends Component {
   componentDidMount() {
     var updated = this.state.update;
     this.setState({rendered:true});
-    this.interval = setInterval(() => this.setState({ update: !updated }), 1000);
+    //this.interval= setInterval(() => this.setState({ update: !updated }), 1000);
   }
   componentWillUnmount() {
-    clearInterval(this.interval);
+    //clearInterval(this.interval);
   }
 
-  handleCount(email,provider) {
+  handleCount(email:string,provider:string) {
 
-    authService.getCount(email,provider).then(count => {
+    authService.getCount(email,provider).then((count:any) => {
       var userName = "You have logged into user "+email+", provider "
       +provider+" "+count+" times.";
       this.setState({currentCount: count});
       if(document.getElementById("helloname") !== null) {
-          document.getElementById("helloname").innerHTML = userName;
+          document!.getElementById("helloname")!.innerHTML = userName;
       }
-    }).then(error => {
+    }).then((error:any) => {
     });
   }
 
-    isOnline(session) {
+    isOnline(session:any) {
       var self = this;
       var currentTime = (new Date()).getTime() / 1000;
 
@@ -59,9 +60,9 @@ class App extends Component {
         return;
       }
       if(session != null) {
-        hello.on('auth.login', function(auth) {
+        hello.on('auth.login', function(auth:any) {
           // Call user information, for the given network
-          authService.getNetworkResponse(auth.network).then(function(r) {
+          authService.getNetworkResponse(auth.network).then(function(r:any) {
             const user = r.email;
             const provider = auth.network;
             if(r.email === "") {
@@ -69,7 +70,7 @@ class App extends Component {
             }
             self.setState({currentUser: user,currentProvider: provider});
 
-            authService.getCount(r.email,auth.network).then(count => {
+            authService.getCount(r.email,auth.network).then((count:any) => {
               self.setState({currentCount: count});
 
               if(count === undefined || count === 0) {
@@ -81,9 +82,9 @@ class App extends Component {
                else {
                 self.handleCount(user,provider);
               }
-            }).catch((err) => {
+            }).catch((err:any) => {
               if(document.getElementById("helloname") !== null) {
-                document.getElementById("helloname").innerHTML = 
+                document!.getElementById("helloname")!.innerHTML = 
                 err+" Check the status of the server and database.";
             }
             });

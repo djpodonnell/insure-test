@@ -62,7 +62,14 @@ it('google login', async () => {
   const email = {
     email: 'djpodonnell@gmail.com'
   };
+
   var currentTime = (new Date()).getTime() / 1000;
+  const obj = {
+    provider: 'google',
+    access_token: 'abcd',
+    expires: currentTime+10000
+  };
+  
   
   const spyOnAuth = jest.spyOn(authService , 'getAuthResponse').mockReturnValue(obj);
   const testRenderer = TestRenderer.create(

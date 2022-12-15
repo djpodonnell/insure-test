@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const expressUpdate = require('express');
+const routerUpdate = expressUpdate.Router();
 const update = require('../services/hello');
 
 /* GET quotes listing. */
-router.get('/', function(req, res, next) {
+routerUpdate.get('/', function(req:any, res:any, next:any) {
   try {
     var user = "";
     var provider = "";
@@ -24,10 +24,10 @@ router.get('/', function(req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
     res.json(update.updateCount(user,provider,count));
-  } catch(err) {
+  } catch(err:any) {
     console.error(`Error while getting quotes `, err.message);
     next(err);
   }
 });
 
-module.exports = router;
+module.exports = routerUpdate;

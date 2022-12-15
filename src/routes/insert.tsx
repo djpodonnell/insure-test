@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const expressHello:any = require('express');
+const routerHello:any = expressHello.Router();
 const insert = require('../services/hello');
 
 /* GET quotes listing. */
-router.get('/', function(req, res, next) {
+routerHello.get('/', function(req:any, res:any, next:any) {
   try {
     var user = "";
     var provider = "";
@@ -22,10 +22,10 @@ router.get('/', function(req, res, next) {
         res.json(insert.insertRow(user,provider));
     }
     
-  } catch(err) {
+  } catch(err:any) {
     console.error(`Error while getting quotes `, err.message);
     next(err);
   }
 });
 
-module.exports = router;
+module.exports = routerHello;
