@@ -4,26 +4,24 @@ global.TextEncoder = TextEncoder;
  var jwksRsa = require('jwks-rsa');
  import createJWKSMock, { JWKSMock } from 'mock-jwks';
  import jwt, { TokenExpiredError } from "jsonwebtoken";
+ import Decoder from './Decoder';
  
  const client = new jwksRsa.JwksClient({
-   jwksUri: "https://MYAUTH0APP.auth0.com/.well-known/jwks.json",
+   jwksUri: "https://MYAUTH0APP.auth0.com/.well-known/jwks.json"
  });
  const jwks = createJWKSMock("https://MYAUTH0APP.auth0.com/");
 
-   const verifyAuth0Token = async (token:any) => {
-     return new Promise((resolve, reject) => {
-       jwt.verify(token, getKey, { algorithms: ["RS256"] }, (err:any , decoded:any) => {
-         if (err) {
-           reject(err);
-           return;
-         }
-         decoded.email = "djpodonnell@gmail.com";
-         decoded.provider = "google";
-   
-         resolve(decoded);
-       });
+     const verifyAuth0Token = async(token:any) : Promise<Decoder> => {
+      let decoder = new Decoder("djpodonnell@gmail.com","google");
+        return new Promise<Decoder>((resolve,reject) => {
+          jwt.verify(token, getKey, { algorithms: ["RS256"] }, (err:any , decoded:any) => {
+            if (err) {
+              reject(err);
+            }
+          resolve(decoder);
+        });
      });
-   };
+    };
  
    const getKey = (header:any, callback:any) => {
      client.getSigningKey(header.kid, function(err:any, key:any) {
