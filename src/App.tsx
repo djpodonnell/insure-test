@@ -1,20 +1,12 @@
 import React,{ Component } from 'react';
 import { interval } from 'rxjs';
 
-//window = global.window;
-//console.log("win = "+window);
-if(typeof window !== 'undefined') {
-  window = global.window;
-  console.log("undefined = "+global.window);
-}
-
 let hello = require('hellojs/dist/hello.all.js');
 hello.init({
   google: '343118601751-98jpuellh8ckif2hpi0ak309jb6nufc5.apps.googleusercontent.com',
   windows: '64d87118-92ad-4898-85eb-a05dc8af6e49',
   facebook: ''
 }, {redirect_uri: 'http://localhost:3000'});
-//console.log("glo = "+global.window);
 
 const authService = require('./authService');
 

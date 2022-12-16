@@ -7,6 +7,7 @@ import TestRenderer from 'react-test-renderer';
 import App from './App';
 import 'setimmediate';
 import React from 'react';
+import Decoder from "./Decoder";
 
 let hello = require('hellojs/dist/hello.all.js')
 hello.init({
@@ -14,6 +15,12 @@ hello.init({
 }, {redirect_uri: 'http://localhost:3000'});
 
 const authService = require('./authService');
+
+it('test app behaviour', async () => {
+  const dec = new Decoder("djpodonnell@gmail.com","google");
+  expect(dec.email).toEqual("djpodonnell@gmail.com"); 
+  expect(dec.provider).toEqual("google"); 
+})
 
 it('test app behaviour', async () => {
     const testRenderer = TestRenderer.create(
